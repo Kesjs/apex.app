@@ -5,6 +5,7 @@ const withPWAConfig = withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
+  disable: false,
 });
 
 const nextConfig: NextConfig = {
@@ -12,7 +13,6 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Turbopack config for Next.js 16 compatibility with next-pwa
   turbopack: {},
 };
 
