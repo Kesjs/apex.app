@@ -1,111 +1,110 @@
-// Match types
-export type MatchStatus = 'UPCOMING' | 'LIVE' | 'FINISHED';
+// ============================================
+// CORE TYPES
+// ============================================
+
+export type MatchStatus = 'LIVE' | 'UPCOMING' | 'FINISHED';
+export type Period = 'FULL' | 'FIRST_HALF' | 'SECOND_HALF';
+export type FormResult = 'W' | 'D' | 'L';
 
 export interface Team {
   id: string;
   name: string;
-  code: string;
-  logo: string;
+  shortName: string;
+  logoUrl: string;
 }
 
-export interface Score {
-  home: number;
-  away: number;
+export interface Competition {
+  id: string;
+  slug: string;
+  name: string;
+  country: string;
+  iconUrl: string;
+  isFeatured: boolean;
 }
 
 export interface Match {
   id: string;
+  competitionId: string;
+  status: MatchStatus;
   homeTeam: Team;
   awayTeam: Team;
-  status: MatchStatus;
-  score: Score;
-  startTime: Date;
-  competition: string;
-  timeline: MatchEvent[];
+  homeScore: number | null;
+  awayScore: number | null;
+  minute?: number;
+  kickoffTime: string;
+  periodScores?: {
+    firstHalf: { home: number; away: number } | null;
+    secondHalf: { home: number; away: number } | null;
+  };
 }
 
-export interface MatchEvent {
-  minute: number;
-  type: 'GOAL' | 'CARD' | 'SUBSTITUTION' | 'CHANCE';
-  team: 'home' | 'away';
-  player?: string;
-  description: string;
-}
+// ============================================
+// ANALYSIS DATA
+// ============================================
 
-// Analysis types
 export interface Insight {
-  title: string;
-  description: string;
-  calculation: string; // Base de calcul affichée en petit
-  icon?: string;
+  id: string;
+  text: string;
+  basis: string;
 }
 
 export interface PoissonPrediction {
-  homeGoals: number;
-  awayGoals: number;
+  predictedScore: string; // e.g. "2-1"
   confidence: number; // 0-100
-  methodology: string;
+  methodNote: string;
 }
 
-export interface FormData {
-  team: Team;
-  last5: ('W' | 'D' | 'L')[];
+export interface TeamForm {
+  teamId: string;
+  results: FormResult[]; // 5 derniers
 }
 
-export interface H2HData {
-  homeWins: number;
+export interface H2HRecord {
+  teamAWins: number;
   draws: number;
-  awayWins: number;
+  teamBWins: number;
 }
 
-export interface PreMatchAnalysis {
+export interface MatchAnalysis {
+  matchId: string;
   insights: Insight[];
-  poissonPrediction: PoissonPrediction;
-  formData: [FormData, FormData]; // home, away
-  h2h: H2HData;
+  prediction: PoissonPrediction;
+  formHome: TeamForm;
+  formAway: TeamForm;
+  h2h: H2HRecord;
 }
 
-// Match stats types
-export interface TeamStats {
-  team: Team;
-  possession: number;
-  shots: number;
-  shotsOnTarget: number;
-  corners: number;
-  fouls: number;
-  offsides: number;
-  yellowCards: number;
-  redCards: number;
+// ============================================
+// MATCH STATS
+// ============================================
+
+export interface StatPair {
+  label: string;
+  home: number;
+  away: number;
+  unit?: '%';
 }
 
 export interface PlayerStat {
   id: string;
   name: string;
-  team: Team;
-  position: string;
-  goals: number;
-  assists: number;
-  shotAccuracy?: number;
+  teamId: string;
+  avatarUrl: string;
+  statLabel: string;
+  statValue: string;
 }
 
 export interface MatchStats {
   matchId: string;
-  homeTeamStats: TeamStats;
-  awayTeamStats: TeamStats;
+  period: Period;
+  stats: StatPair[];
+  cardsHome: number;
+  cardsAway: number;
   playersToWatch: PlayerStat[];
-  period: 'FULL' | 'FIRST_HALF' | 'SECOND_HALF';
 }
 
-// PromoCard types
-export interface PromoCard {
-  id: string;
-  title: string;
-  description: string;
-  cta: string;
-  link: string;
-  utm: {
-    source: string;
-    medium: string;
-    campaign: string;
-  };
-}
+// ============================================
+// UI STATE
+// ============================================
+
+export type FilterTab = 'LIVE' | 'UPCOMING' | 'FINISHED';

@@ -1,432 +1,399 @@
 import {
-  Match,
-  PreMatchAnalysis,
-  MatchStats,
-  MatchStatus,
   Team,
-  PlayerStat,
+  Competition,
+  Match,
+  MatchAnalysis,
+  MatchStats,
 } from './types';
 
 // ============================================
-// TEAMS - Multi-league
+// COMPETITIONS
 // ============================================
 
-const teams: Record<string, Team> = {
-  // Ligue 1
-  PSG: { id: '1', name: 'Paris Saint-Germain', code: 'PSG', logo: '🔴' },
-  OM: { id: '2', name: 'Olympique Marseille', code: 'OM', logo: '🔵' },
-  OL: { id: '3', name: 'Olympique Lyonnais', code: 'OL', logo: '⚪' },
-  NICE: { id: '4', name: 'OGC Nice', code: 'NICE', logo: '🟤' },
-  MONACO: { id: '5', name: 'AS Monaco', code: 'MONACO', logo: '🔴' },
-  LENS: { id: '6', name: 'RC Lens', code: 'LENS', logo: '🟡' },
-  RENNES: { id: '7', name: 'Stade Rennes', code: 'RENNES', logo: '🔴' },
-  LILLE: { id: '8', name: 'LOSC Lille', code: 'LILLE', logo: '⚫' },
-
-  // Premier League
-  MU: { id: '9', name: 'Manchester United', code: 'MU', logo: '🔴' },
-  MC: { id: '10', name: 'Manchester City', code: 'MC', logo: '🔵' },
-  LIV: { id: '11', name: 'Liverpool', code: 'LIV', logo: '🔴' },
-  ARS: { id: '12', name: 'Arsenal', code: 'ARS', logo: '🔴' },
-  CHE: { id: '13', name: 'Chelsea', code: 'CHE', logo: '🔵' },
-  TOT: { id: '14', name: 'Tottenham', code: 'TOT', logo: '⚪' },
-
-  // La Liga
-  RMA: { id: '15', name: 'Real Madrid', code: 'RMA', logo: '⚪' },
-  FCB: { id: '16', name: 'FC Barcelona', code: 'FCB', logo: '🔵' },
-  ATM: { id: '17', name: 'Atlético Madrid', code: 'ATM', logo: '🔴' },
-  RVS: { id: '18', name: 'Sevilla', code: 'RVS', logo: '🔴' },
-
-  // Serie A
-  JUV: { id: '19', name: 'Juventus', code: 'JUV', logo: '⚫' },
-  ITA: { id: '20', name: 'Inter Milan', code: 'ITA', logo: '🔵' },
-  ACM: { id: '21', name: 'AC Milan', code: 'ACM', logo: '🔴' },
-  LAZ: { id: '22', name: 'Lazio', code: 'LAZ', logo: '🔵' },
-};
-
-// ============================================
-// MATCHES - Multiple leagues, all statuses
-// ============================================
-
-export const mockMatches: Match[] = [
-  // LIVE NOW
+export const mockCompetitions: Competition[] = [
   {
-    id: 'match-1',
-    homeTeam: teams.PSG,
-    awayTeam: teams.OM,
-    status: 'LIVE',
-    score: { home: 2, away: 1 },
-    startTime: new Date(Date.now() - 45 * 60 * 1000),
-    competition: 'Ligue 1',
-    timeline: [
-      {
-        minute: 8,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Kylian Mbappé',
-        description: 'But PSG - Centre Ousmane Dembélé',
-      },
-      {
-        minute: 22,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Pierre-Emerick Aubameyang',
-        description: 'But Marseille - Contre-attaque',
-      },
-      {
-        minute: 35,
-        type: 'CARD',
-        team: 'away',
-        description: 'Carton jaune - Faute sur Dembélé',
-      },
-      {
-        minute: 41,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Marco Verratti',
-        description: 'But PSG - Coup franc',
-      },
-    ],
+    id: 'ucl',
+    slug: 'champions-league',
+    name: 'Champions League',
+    country: 'EU',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23001f3f" stroke="%23FFD700" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="24" fill="%23FFD700" text-anchor="middle" font-weight="bold"%3ECL%3C/text%3E%3C/svg%3E',
+    isFeatured: true,
   },
-
   {
-    id: 'match-2',
-    homeTeam: teams.MC,
-    awayTeam: teams.LIV,
-    status: 'LIVE',
-    score: { home: 1, away: 1 },
-    startTime: new Date(Date.now() - 60 * 60 * 1000),
-    competition: 'Premier League',
-    timeline: [
-      {
-        minute: 12,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Erling Haaland',
-        description: 'But Manchester City',
-      },
-      {
-        minute: 38,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Mohamed Salah',
-        description: 'But Liverpool',
-      },
-    ],
+    id: 'pl',
+    slug: 'premier-league',
+    name: 'Premier League',
+    country: 'England',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect x="10" y="10" width="80" height="80" fill="%23003366" stroke="%23FFFFFF" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="20" fill="%23FFFFFF" text-anchor="middle" font-weight="bold"%3EPL%3C/text%3E%3C/svg%3E',
+    isFeatured: true,
   },
-
-  // UPCOMING
   {
-    id: 'match-3',
-    homeTeam: teams.RMA,
-    awayTeam: teams.FCB,
-    status: 'UPCOMING',
-    score: { home: 0, away: 0 },
-    startTime: new Date(Date.now() + 3 * 60 * 60 * 1000),
-    competition: 'La Liga',
-    timeline: [],
+    id: 'll',
+    slug: 'la-liga',
+    name: 'La Liga',
+    country: 'Spain',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect x="10" y="10" width="80" height="80" fill="%23DC143C" stroke="%23FFD700" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="20" fill="%23FFD700" text-anchor="middle" font-weight="bold"%3ELL%3C/text%3E%3C/svg%3E',
+    isFeatured: true,
   },
-
   {
-    id: 'match-4',
-    homeTeam: teams.OL,
-    awayTeam: teams.LENS,
-    status: 'UPCOMING',
-    score: { home: 0, away: 0 },
-    startTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
-    competition: 'Ligue 1',
-    timeline: [],
+    id: 'l1',
+    slug: 'ligue-1',
+    name: 'Ligue 1',
+    country: 'France',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%230066CC" stroke="%23FFFFFF" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="20" fill="%23FFFFFF" text-anchor="middle" font-weight="bold"%3EL1%3C/text%3E%3C/svg%3E',
+    isFeatured: true,
   },
-
   {
-    id: 'match-5',
-    homeTeam: teams.ITA,
-    awayTeam: teams.JUV,
-    status: 'UPCOMING',
-    score: { home: 0, away: 0 },
-    startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    competition: 'Serie A',
-    timeline: [],
+    id: 'sa',
+    slug: 'serie-a',
+    name: 'Serie A',
+    country: 'Italy',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect x="10" y="10" width="80" height="80" fill="%23003d7a" stroke="%23ffffff" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="20" fill="%23ffffff" text-anchor="middle" font-weight="bold"%3ESA%3C/text%3E%3C/svg%3E',
+    isFeatured: true,
   },
-
   {
-    id: 'match-6',
-    homeTeam: teams.ARS,
-    awayTeam: teams.MU,
-    status: 'UPCOMING',
-    score: { home: 0, away: 0 },
-    startTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-    competition: 'Premier League',
-    timeline: [],
+    id: 'bl',
+    slug: 'bundesliga',
+    name: 'Bundesliga',
+    country: 'Germany',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23000000" stroke="%23D00000" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="20" fill="%23D00000" text-anchor="middle" font-weight="bold"%3EBL%3C/text%3E%3C/svg%3E',
+    isFeatured: false,
   },
-
-  // FINISHED
   {
-    id: 'match-7',
-    homeTeam: teams.NICE,
-    awayTeam: teams.PSG,
-    status: 'FINISHED',
-    score: { home: 1, away: 3 },
-    startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    competition: 'Ligue 1',
-    timeline: [
-      {
-        minute: 12,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Kylian Mbappé',
-        description: 'But PSG',
-      },
-      {
-        minute: 34,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Evann Guessand',
-        description: 'But Nice',
-      },
-      {
-        minute: 67,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Ousmane Dembélé',
-        description: 'But PSG',
-      },
-      {
-        minute: 89,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Marco Verratti',
-        description: 'But PSG',
-      },
-    ],
+    id: 'can',
+    slug: 'can',
+    name: 'Africa Cup of Nations',
+    country: 'Africa',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect x="10" y="10" width="80" height="80" fill="%23FCD116" stroke="%23000000" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="16" fill="%23000000" text-anchor="middle" font-weight="bold"%3ECAN%3C/text%3E%3C/svg%3E',
+    isFeatured: false,
   },
-
   {
-    id: 'match-8',
-    homeTeam: teams.CHE,
-    awayTeam: teams.TOT,
-    status: 'FINISHED',
-    score: { home: 2, away: 0 },
-    startTime: new Date(Date.now() - 12 * 60 * 60 * 1000),
-    competition: 'Premier League',
-    timeline: [
-      {
-        minute: 23,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Cole Palmer',
-        description: 'But Chelsea',
-      },
-      {
-        minute: 76,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Reece James',
-        description: 'But Chelsea',
-      },
-    ],
-  },
-
-  {
-    id: 'match-9',
-    homeTeam: teams.ACM,
-    awayTeam: teams.LAZ,
-    status: 'FINISHED',
-    score: { home: 1, away: 2 },
-    startTime: new Date(Date.now() - 6 * 60 * 60 * 1000),
-    competition: 'Serie A',
-    timeline: [
-      {
-        minute: 15,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Ciro Immobile',
-        description: 'But Lazio',
-      },
-      {
-        minute: 52,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Rafael Leão',
-        description: 'But AC Milan',
-      },
-      {
-        minute: 88,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Luis Alberto',
-        description: 'But Lazio',
-      },
-    ],
-  },
-
-  {
-    id: 'match-10',
-    homeTeam: teams.ATM,
-    awayTeam: teams.RVS,
-    status: 'FINISHED',
-    score: { home: 1, away: 1 },
-    startTime: new Date(Date.now() - 36 * 60 * 60 * 1000),
-    competition: 'La Liga',
-    timeline: [
-      {
-        minute: 28,
-        type: 'GOAL',
-        team: 'home',
-        player: 'Álvaro Morata',
-        description: 'But Atlético',
-      },
-      {
-        minute: 64,
-        type: 'GOAL',
-        team: 'away',
-        player: 'Youssef En-Nesyri',
-        description: 'But Séville',
-      },
-    ],
+    id: 'wc26',
+    slug: 'world-cup-2026',
+    name: 'World Cup 2026',
+    country: 'Intl',
+    iconUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23FFD700" stroke="%23000000" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="16" fill="%23000000" text-anchor="middle" font-weight="bold"%3EWC%3C/text%3E%3C/svg%3E',
+    isFeatured: false,
   },
 ];
 
 // ============================================
-// PRE-MATCH ANALYSES
+// TEAMS
 // ============================================
 
-const analysisMap: Record<string, PreMatchAnalysis> = {
-  'match-1': {
-    insights: [
-      {
-        title: 'Derby domination',
-        description: 'PSG remporte 73% des Classico à domicile',
-        calculation: '11 victoires / 15 matchs au Parc',
-        icon: '👑',
-      },
-      {
-        title: 'Buteurs en forme',
-        description: 'Mbappé a marqué dans 8/12 derniers matchs',
-        calculation: 'Moyenne de 1.2 but par match',
-        icon: '⚽',
-      },
-      {
-        title: 'Matchs offensifs',
-        description: 'Les 3 derniers Classico ont eu 3+ buts',
-        calculation: '3-1, 4-0, 2-2 (derniers résultats)',
-        icon: '🔥',
-      },
-    ],
-    poissonPrediction: {
-      homeGoals: 2.1,
-      awayGoals: 0.9,
-      confidence: 82,
-      methodology: 'Modèle Poisson + historique Derby',
-    },
-    formData: [
-      {
-        team: teams.PSG,
-        last5: ['W', 'W', 'W', 'D', 'W'],
-      },
-      {
-        team: teams.OM,
-        last5: ['W', 'D', 'L', 'W', 'L'],
-      },
-    ],
-    h2h: {
-      homeWins: 11,
-      draws: 3,
-      awayWins: 1,
-    },
-  },
+const teamLogoSvg = (initials: string, color: string) =>
+  `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="${encodeURIComponent(color)}" stroke="%23ffffff" stroke-width="2"/%3E%3Ctext x="50" y="60" font-size="36" fill="%23ffffff" text-anchor="middle" font-weight="bold"%3E${initials}%3C/text%3E%3C/svg%3E`;
 
-  'match-3': {
-    insights: [
-      {
-        title: 'Clash au sommet',
-        description: 'Real Madrid en meilleure forme (10/12 victoires)',
-        calculation: 'Forme récente: 5 victoires consécutives',
-        icon: '👑',
-      },
-      {
-        title: 'Vizzà offensive',
-        description: 'Barcelona a 0.8 but par match en L1',
-        calculation: '4 buts en 5 matchs',
-        icon: '⚽',
-      },
-      {
-        title: 'Tactiques défensives',
-        description: 'Les Classicos sont généralement serrés',
-        calculation: 'Derniers matchs: 1-1, 0-0, 2-1',
-        icon: '🛡️',
-      },
-    ],
-    poissonPrediction: {
-      homeGoals: 1.6,
-      awayGoals: 0.8,
-      confidence: 75,
-      methodology: 'Analyse tactique + possession moyenne',
-    },
-    formData: [
-      {
-        team: teams.RMA,
-        last5: ['W', 'W', 'W', 'W', 'W'],
-      },
-      {
-        team: teams.FCB,
-        last5: ['D', 'W', 'L', 'W', 'W'],
-      },
-    ],
-    h2h: {
-      homeWins: 8,
-      draws: 5,
-      awayWins: 2,
-    },
+const teams: Record<string, Team> = {
+  PSG: {
+    id: 'psg',
+    name: 'Paris Saint-Germain',
+    shortName: 'PSG',
+    logoUrl: teamLogoSvg('PSG', '%234C7FD9'),
   },
-
-  'match-2': {
-    insights: [
-      {
-        title: 'Bataille des titans',
-        description: 'Manchester City en meilleure forme (9/10 victoires)',
-        calculation: 'Possessions moyennes: 68%',
-        icon: '👑',
-      },
-      {
-        title: 'Haaland en feu',
-        description: '22 buts en 19 matchs pour Erling Haaland',
-        calculation: '1.16 but par match',
-        icon: '⚽',
-      },
-      {
-        title: 'Salah réactif',
-        description: 'Liverpool domine généralement la possession face à City',
-        calculation: 'Derniers: 1-1, 2-2, 3-2',
-        icon: '🔄',
-      },
-    ],
-    poissonPrediction: {
-      homeGoals: 1.9,
-      awayGoals: 1.1,
-      confidence: 76,
-      methodology: 'Modèle dynamique Premier League',
-    },
-    formData: [
-      {
-        team: teams.MC,
-        last5: ['W', 'W', 'W', 'D', 'W'],
-      },
-      {
-        team: teams.LIV,
-        last5: ['W', 'W', 'L', 'W', 'W'],
-      },
-    ],
-    h2h: {
-      homeWins: 6,
-      draws: 2,
-      awayWins: 7,
-    },
+  OM: {
+    id: 'om',
+    name: 'Olympique Marseille',
+    shortName: 'OM',
+    logoUrl: teamLogoSvg('OM', '%23FFFFFF'),
+  },
+  MCI: {
+    id: 'mci',
+    name: 'Manchester City',
+    shortName: 'MCI',
+    logoUrl: teamLogoSvg('MCI', '%23649FD9'),
+  },
+  LIV: {
+    id: 'liv',
+    name: 'Liverpool',
+    shortName: 'LIV',
+    logoUrl: teamLogoSvg('LIV', '%23C8102E'),
+  },
+  RMA: {
+    id: 'rma',
+    name: 'Real Madrid',
+    shortName: 'RMA',
+    logoUrl: teamLogoSvg('RMA', '%23FFFFFF'),
+  },
+  FCB: {
+    id: 'fcb',
+    name: 'FC Barcelona',
+    shortName: 'FCB',
+    logoUrl: teamLogoSvg('FCB', '%23004B9D'),
+  },
+  JUV: {
+    id: 'juv',
+    name: 'Juventus',
+    shortName: 'JUV',
+    logoUrl: teamLogoSvg('JUV', '%23000000'),
+  },
+  ITA: {
+    id: 'ita',
+    name: 'Inter Milan',
+    shortName: 'ITA',
+    logoUrl: teamLogoSvg('ITA', '%23000000'),
+  },
+  BVB: {
+    id: 'bvb',
+    name: 'Borussia Dortmund',
+    shortName: 'BVB',
+    logoUrl: teamLogoSvg('BVB', '%23FFD700'),
+  },
+  BAY: {
+    id: 'bay',
+    name: 'Bayern Munich',
+    shortName: 'BAY',
+    logoUrl: teamLogoSvg('BAY', '%23DC0A17'),
+  },
+  EGY: {
+    id: 'egy',
+    name: 'Egypt',
+    shortName: 'EGY',
+    logoUrl: teamLogoSvg('EGY', '%23CE1126'),
+  },
+  SEN: {
+    id: 'sen',
+    name: 'Senegal',
+    shortName: 'SEN',
+    logoUrl: teamLogoSvg('SEN', '%23007A5E'),
   },
 };
 
-export function getPreMatchAnalysis(matchId: string): PreMatchAnalysis {
-  return analysisMap[matchId] || analysisMap['match-1'];
-}
+// ============================================
+// MATCHES
+// ============================================
+
+const now = new Date();
+
+export const mockMatches: Match[] = [
+  // LIVE
+  {
+    id: 'match-1',
+    competitionId: 'l1',
+    status: 'LIVE',
+    homeTeam: teams.PSG,
+    awayTeam: teams.OM,
+    homeScore: 2,
+    awayScore: 1,
+    minute: 67,
+    kickoffTime: new Date(now.getTime() - 67 * 60000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 1, away: 0 },
+      secondHalf: { home: 1, away: 1 },
+    },
+  },
+  {
+    id: 'match-2',
+    competitionId: 'pl',
+    status: 'LIVE',
+    homeTeam: teams.MCI,
+    awayTeam: teams.LIV,
+    homeScore: 1,
+    awayScore: 1,
+    minute: 45,
+    kickoffTime: new Date(now.getTime() - 45 * 60000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 1, away: 1 },
+      secondHalf: null,
+    },
+  },
+  {
+    id: 'match-3',
+    competitionId: 'ucl',
+    status: 'LIVE',
+    homeTeam: teams.RMA,
+    awayTeam: teams.FCB,
+    homeScore: 0,
+    awayScore: 0,
+    minute: 23,
+    kickoffTime: new Date(now.getTime() - 23 * 60000).toISOString(),
+    periodScores: {
+      firstHalf: null,
+      secondHalf: null,
+    },
+  },
+  // UPCOMING
+  {
+    id: 'match-4',
+    competitionId: 'sa',
+    status: 'UPCOMING',
+    homeTeam: teams.JUV,
+    awayTeam: teams.ITA,
+    homeScore: null,
+    awayScore: null,
+    kickoffTime: new Date(now.getTime() + 2 * 3600000).toISOString(),
+  },
+  {
+    id: 'match-5',
+    competitionId: 'bl',
+    status: 'UPCOMING',
+    homeTeam: teams.BVB,
+    awayTeam: teams.BAY,
+    homeScore: null,
+    awayScore: null,
+    kickoffTime: new Date(now.getTime() + 5 * 3600000).toISOString(),
+  },
+  {
+    id: 'match-6',
+    competitionId: 'll',
+    status: 'UPCOMING',
+    homeTeam: teams.RMA,
+    awayTeam: teams.FCB,
+    homeScore: null,
+    awayScore: null,
+    kickoffTime: new Date(now.getTime() + 24 * 3600000).toISOString(),
+  },
+  {
+    id: 'match-7',
+    competitionId: 'ucl',
+    status: 'UPCOMING',
+    homeTeam: teams.JUV,
+    awayTeam: teams.PSG,
+    homeScore: null,
+    awayScore: null,
+    kickoffTime: new Date(now.getTime() + 48 * 3600000).toISOString(),
+  },
+  {
+    id: 'match-8',
+    competitionId: 'can',
+    status: 'UPCOMING',
+    homeTeam: teams.EGY,
+    awayTeam: teams.SEN,
+    homeScore: null,
+    awayScore: null,
+    kickoffTime: new Date(now.getTime() + 72 * 3600000).toISOString(),
+  },
+  // FINISHED
+  {
+    id: 'match-9',
+    competitionId: 'l1',
+    status: 'FINISHED',
+    homeTeam: teams.PSG,
+    awayTeam: teams.OM,
+    homeScore: 3,
+    awayScore: 0,
+    kickoffTime: new Date(now.getTime() - 24 * 3600000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 2, away: 0 },
+      secondHalf: { home: 1, away: 0 },
+    },
+  },
+  {
+    id: 'match-10',
+    competitionId: 'pl',
+    status: 'FINISHED',
+    homeTeam: teams.MCI,
+    awayTeam: teams.LIV,
+    homeScore: 2,
+    awayScore: 2,
+    kickoffTime: new Date(now.getTime() - 12 * 3600000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 1, away: 1 },
+      secondHalf: { home: 1, away: 1 },
+    },
+  },
+  {
+    id: 'match-11',
+    competitionId: 'll',
+    status: 'FINISHED',
+    homeTeam: teams.RMA,
+    awayTeam: teams.FCB,
+    homeScore: 1,
+    awayScore: 2,
+    kickoffTime: new Date(now.getTime() - 6 * 3600000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 0, away: 1 },
+      secondHalf: { home: 1, away: 1 },
+    },
+  },
+  {
+    id: 'match-12',
+    competitionId: 'ucl',
+    status: 'FINISHED',
+    homeTeam: teams.JUV,
+    awayTeam: teams.BVB,
+    homeScore: 0,
+    awayScore: 1,
+    kickoffTime: new Date(now.getTime() - 3 * 3600000).toISOString(),
+    periodScores: {
+      firstHalf: { home: 0, away: 1 },
+      secondHalf: { home: 0, away: 0 },
+    },
+  },
+];
+
+// ============================================
+// ANALYSES
+// ============================================
+
+const analysesMap: Record<string, MatchAnalysis> = {
+  'match-1': {
+    matchId: 'match-1',
+    insights: [
+      {
+        id: 'i1',
+        text: 'Les deux équipes ont marqué dans 7 sur 8 derniers matchs',
+        basis: 'Basé sur les 8 derniers matchs des deux équipes',
+      },
+      {
+        id: 'i2',
+        text: 'PSG score en moyenne 2.3 buts par match à domicile',
+        basis: 'Moyenne sur 10 matchs au Parc des Princes',
+      },
+    ],
+    prediction: {
+      predictedScore: '2-1',
+      confidence: 78,
+      methodNote: 'Modèle de Poisson appliqué aux 10 derniers matchs',
+    },
+    formHome: {
+      teamId: 'psg',
+      results: ['W', 'W', 'D', 'W', 'W'],
+    },
+    formAway: {
+      teamId: 'om',
+      results: ['L', 'W', 'D', 'L', 'W'],
+    },
+    h2h: {
+      teamAWins: 12,
+      draws: 3,
+      teamBWins: 2,
+    },
+  },
+  'match-2': {
+    matchId: 'match-2',
+    insights: [
+      {
+        id: 'i1',
+        text: 'Manchester City invaincue depuis 15 matchs',
+        basis: '15 matchs sans défaite toutes compétitions',
+      },
+      {
+        id: 'i2',
+        text: 'Haaland a marqué dans 6 des 8 derniers matchs',
+        basis: 'Buteur régulier pour Manchester City',
+      },
+    ],
+    prediction: {
+      predictedScore: '2-1',
+      confidence: 72,
+      methodNote: 'Dynamique actuelle: City en hausse',
+    },
+    formHome: {
+      teamId: 'mci',
+      results: ['W', 'W', 'W', 'W', 'D'],
+    },
+    formAway: {
+      teamId: 'liv',
+      results: ['W', 'D', 'W', 'W', 'L'],
+    },
+    h2h: {
+      teamAWins: 5,
+      draws: 3,
+      teamBWins: 7,
+    },
+  },
+};
 
 // ============================================
 // MATCH STATS
@@ -435,143 +402,125 @@ export function getPreMatchAnalysis(matchId: string): PreMatchAnalysis {
 const statsMap: Record<string, MatchStats> = {
   'match-1': {
     matchId: 'match-1',
-    homeTeamStats: {
-      team: teams.PSG,
-      possession: 62,
-      shots: 15,
-      shotsOnTarget: 8,
-      corners: 7,
-      fouls: 8,
-      offsides: 2,
-      yellowCards: 2,
-      redCards: 0,
-    },
-    awayTeamStats: {
-      team: teams.OM,
-      possession: 38,
-      shots: 9,
-      shotsOnTarget: 4,
-      corners: 3,
-      fouls: 12,
-      offsides: 1,
-      yellowCards: 3,
-      redCards: 0,
-    },
+    period: 'FULL',
+    stats: [
+      { label: 'Possession', home: 62, away: 38, unit: '%' },
+      { label: 'Tirs', home: 15, away: 8 },
+      { label: 'Tirs cadrés', home: 8, away: 3 },
+      { label: 'Corners', home: 7, away: 2 },
+      { label: 'Fautes', home: 10, away: 14 },
+      { label: 'Hors-jeu', home: 2, away: 1 },
+    ],
+    cardsHome: 1,
+    cardsAway: 2,
     playersToWatch: [
       {
         id: 'p1',
         name: 'Kylian Mbappé',
-        team: teams.PSG,
-        position: 'Ailier',
-        goals: 2,
-        assists: 1,
+        teamId: 'psg',
+        avatarUrl: teamLogoSvg('KM', '%234C7FD9'),
+        statLabel: 'Buts',
+        statValue: '2',
       },
       {
         id: 'p2',
-        name: 'Marco Verratti',
-        team: teams.PSG,
-        position: 'Milieu',
-        goals: 1,
-        assists: 0,
-      },
-      {
-        id: 'p3',
-        name: 'Pierre-Emerick Aubameyang',
-        team: teams.OM,
-        position: 'Attaquant',
-        goals: 1,
-        assists: 0,
+        name: 'Dimitri Payet',
+        teamId: 'om',
+        avatarUrl: teamLogoSvg('DP', '%23FFFFFF'),
+        statLabel: 'Passes décisives',
+        statValue: '1',
       },
     ],
-    period: 'FULL',
   },
-
   'match-2': {
     matchId: 'match-2',
-    homeTeamStats: {
-      team: teams.MC,
-      possession: 68,
-      shots: 14,
-      shotsOnTarget: 7,
-      corners: 5,
-      fouls: 6,
-      offsides: 0,
-      yellowCards: 1,
-      redCards: 0,
-    },
-    awayTeamStats: {
-      team: teams.LIV,
-      possession: 32,
-      shots: 8,
-      shotsOnTarget: 4,
-      corners: 2,
-      fouls: 9,
-      offsides: 3,
-      yellowCards: 2,
-      redCards: 0,
-    },
+    period: 'FULL',
+    stats: [
+      { label: 'Possession', home: 68, away: 32, unit: '%' },
+      { label: 'Tirs', home: 14, away: 6 },
+      { label: 'Tirs cadrés', home: 7, away: 2 },
+      { label: 'Corners', home: 5, away: 1 },
+      { label: 'Fautes', home: 8, away: 12 },
+      { label: 'Hors-jeu', home: 0, away: 2 },
+    ],
+    cardsHome: 1,
+    cardsAway: 1,
     playersToWatch: [
       {
-        id: 'p4',
+        id: 'p3',
         name: 'Erling Haaland',
-        team: teams.MC,
-        position: 'Attaquant',
-        goals: 1,
-        assists: 0,
+        teamId: 'mci',
+        avatarUrl: teamLogoSvg('EH', '%23649FD9'),
+        statLabel: 'Buts',
+        statValue: '1',
       },
       {
-        id: 'p5',
+        id: 'p4',
         name: 'Mohamed Salah',
-        team: teams.LIV,
-        position: 'Ailier',
-        goals: 1,
-        assists: 1,
-      },
-      {
-        id: 'p6',
-        name: 'Ilkay Gündoğan',
-        team: teams.MC,
-        position: 'Milieu',
-        goals: 0,
-        assists: 1,
+        teamId: 'liv',
+        avatarUrl: teamLogoSvg('MS', '%23C8102E'),
+        statLabel: 'Passes décisives',
+        statValue: '0',
       },
     ],
-    period: 'FULL',
   },
 };
 
-export function getMatchStats(matchId: string): MatchStats {
-  return statsMap[matchId] || statsMap['match-1'];
-}
-
 // ============================================
-// HELPER FUNCTIONS
+// API FUNCTIONS
 // ============================================
 
-export function getMatchById(id: string): Match | undefined {
-  return mockMatches.find((m) => m.id === id);
+export async function getMatches(filter?: {
+  status?: string;
+  competitionId?: string;
+}): Promise<Match[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      let result = [...mockMatches];
+      if (filter?.status) {
+        result = result.filter((m) => m.status === filter.status);
+      }
+      if (filter?.competitionId) {
+        result = result.filter((m) => m.competitionId === filter.competitionId);
+      }
+      resolve(result);
+    }, 300);
+  });
 }
 
-export function getMatchesByStatus(status: MatchStatus): Match[] {
-  return mockMatches.filter((m) => m.status === status);
+export async function getMatchById(id: string): Promise<Match | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockMatches.find((m) => m.id === id) || null);
+    }, 300);
+  });
 }
 
-export function getUpcomingMatches(): Match[] {
-  return getMatchesByStatus('UPCOMING');
+export async function getCompetitions(): Promise<Competition[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockCompetitions);
+    }, 200);
+  });
 }
 
-export function getLiveMatches(): Match[] {
-  return getMatchesByStatus('LIVE');
+export async function getMatchAnalysis(
+  matchId: string
+): Promise<MatchAnalysis | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(analysesMap[matchId] || null);
+    }, 250);
+  });
 }
 
-export function getFinishedMatches(): Match[] {
-  return getMatchesByStatus('FINISHED');
-}
-
-export function getMatchesByCompetition(competition: string): Match[] {
-  return mockMatches.filter((m) => m.competition === competition);
-}
-
-export function getAllCompetitions(): string[] {
-  return [...new Set(mockMatches.map((m) => m.competition))];
+export async function getMatchStats(
+  matchId: string,
+  period?: string
+): Promise<MatchStats | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(statsMap[matchId] || null);
+    }, 250);
+  });
 }

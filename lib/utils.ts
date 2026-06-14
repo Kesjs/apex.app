@@ -1,22 +1,29 @@
-export function formatDate(date: Date): string {
+export function cn(...classes: (string | boolean | undefined | null)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
+
+export function formatDate(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
   return new Intl.DateTimeFormat('fr-FR', {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(date);
+  }).format(d);
 }
 
-export function formatTime(date: Date): string {
+export function formatTime(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
   return new Intl.DateTimeFormat('fr-FR', {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(date);
+  }).format(d);
 }
 
-export function formatRelativeTime(date: Date): string {
+export function formatRelativeTime(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
-  const diffMs = date.getTime() - now.getTime();
+  const diffMs = d.getTime() - now.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
@@ -27,19 +34,30 @@ export function formatRelativeTime(date: Date): string {
   return 'maintenant';
 }
 
-export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ');
-}
+export function getDateLabel(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
-export function calculatePercentage(value: number, total: number): number {
-  if (total === 0) return 0;
-  return Math.round((value / total) * 100);
+  if (d.toDateString() === today.toDateString()) {
+    return 'Aujourd\'hui';
+  }
+  if (d.toDateString() === tomorrow.toDateString()) {
+    return 'Demain';
+  }
+
+  return new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+  }).format(d);
 }
 
 export function generateUTM(
   section: string,
-  campaign: string = 'KENKEN',
-  source: string = 'apex'
+  campaign = 'KENKEN',
+  source = 'apex'
 ): string {
   return `?utm_source=${source}&utm_medium=${section}&utm_campaign=${campaign}`;
 }

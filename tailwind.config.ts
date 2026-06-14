@@ -9,24 +9,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#000000',
-        'card-bg': '#0f1115',
-        accent: '#34D399',
-        'border-dark': '#1e293b',
+        'bg-page': 'rgb(var(--bg-page))',
+        'bg-surface': 'rgb(var(--bg-surface))',
+        'bg-header': 'rgb(var(--bg-header))',
+        'bg-surface-hover': 'rgb(var(--bg-surface-hover))',
+        'border-dark': 'rgb(var(--border))',
+        'accent-active': 'rgb(var(--accent-active))',
+        'accent-cta': 'rgb(var(--accent-cta))',
+        'live-indicator': 'rgb(var(--live-indicator))',
+        'text-primary': 'rgb(var(--text-primary))',
+        'text-secondary': 'rgb(var(--text-secondary))',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
       borderRadius: {
-        'xl': '0.75rem',
+        'xl': '16px',
       },
       animation: {
-        'pulse-accent': 'pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-live': 'pulse-live 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
-        'pulse-accent': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
+        'pulse-live': {
+          '0%, 100%': { scale: '1', opacity: '1' },
+          '50%': { scale: '1.2', opacity: '0.6' },
         },
       },
     },
