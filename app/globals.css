@@ -1,0 +1,608 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --card-bg: #0f1115;
+  --accent: #34D399;
+  --border-dark: #1e293b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton {
+  animation-duration: 1.25s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: shimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(to right, #1e293b 8%, #0f1115 18%, #1e293b 33%);
+  background-size: 800px 104px;
+}
+
+/* Focus states */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Safe area for mobile */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ============================================
+   ANIMATIONS AVANCÉES APEX
+   ============================================ */
+
+/* 1. PAGE TRANSITIONS - Fade + Slide */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.page-enter {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.page-enter-slide {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.page-enter-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.page-exit {
+  animation: fadeOut 0.2s ease-in;
+}
+
+/* 2. PULL-TO-REFRESH ANIMATION */
+@keyframes pullIndicator {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pullBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.pull-to-refresh {
+  position: relative;
+  overflow: hidden;
+}
+
+.pull-indicator {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top 0.3s ease;
+}
+
+.pull-indicator.pulling {
+  animation: pullIndicator 1s linear infinite;
+}
+
+.pull-indicator.refreshing {
+  animation: pullBounce 0.6s ease-in-out;
+}
+
+/* 3. LOADING SPINNER CUSTOM */
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinnerDash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  animation: spinner 1.4s linear infinite;
+}
+
+.spinner-circle {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  animation: spinnerDash 1.4s ease-in-out infinite;
+}
+
+/* Small spinner variant */
+.spinner-sm {
+  width: 24px;
+  height: 24px;
+}
+
+/* Large spinner variant */
+.spinner-lg {
+  width: 56px;
+  height: 56px;
+}
+
+/* 4. SWIPE GESTURES - Tab Indicator */
+@keyframes tabSlide {
+  from {
+    transform: translateX(var(--tab-from));
+  }
+  to {
+    transform: translateX(var(--tab-to));
+  }
+}
+
+.swipe-container {
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+.swipe-content {
+  display: flex;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swipe-item {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+.tab-indicator {
+  position: relative;
+  height: 2px;
+  background: var(--accent);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swipe-hint {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: swipeHint 2s ease-in-out infinite;
+}
+
+@keyframes swipeHint {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-50%) translateX(-10px);
+  }
+}
+
+/* 5. BOTTOM SHEET ANIMATION */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetSlideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.bottom-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+.bottom-sheet-backdrop.open {
+  animation: backdropFadeIn 0.3s ease-out forwards;
+}
+
+.bottom-sheet-backdrop.closing {
+  animation: backdropFadeOut 0.2s ease-in forwards;
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 101;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.bottom-sheet.open {
+  animation: sheetSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.bottom-sheet.closing {
+  animation: sheetSlideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-dark);
+  border-radius: 2px;
+  margin: 12px auto;
+}
+
+/* Card entrance animations */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: cardEnter 0.3s ease-out forwards;
+}
+
+.card-enter-delay-1 {
+  animation-delay: 0.05s;
+  opacity: 0;
+}
+
+.card-enter-delay-2 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.card-enter-delay-3 {
+  animation-delay: 0.15s;
+  opacity: 0;
+}
+
+/* Haptic feedback simulation */
+@keyframes haptic {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.97);
+  }
+}
+
+.haptic-press {
+  animation: haptic 0.15s ease-in-out;
+}
+
+/* Glow effect for accent elements */
+@keyframes accentGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(52, 211, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
+  }
+}
+
+.accent-glow {
+  animation: accentGlow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   ANIMATIONS D'ENTRÉE PRO
+   ============================================ */
+
+/* 1. STAGGER CARDS - Cascade fluide */
+@keyframes staggerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-container {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+}
+
+.stagger-item {
+  animation: staggerEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 60ms; }
+.stagger-item:nth-child(3) { animation-delay: 120ms; }
+.stagger-item:nth-child(4) { animation-delay: 180ms; }
+.stagger-item:nth-child(5) { animation-delay: 240ms; }
+.stagger-item:nth-child(6) { animation-delay: 300ms; }
+.stagger-item:nth-child(7) { animation-delay: 360ms; }
+.stagger-item:nth-child(8) { animation-delay: 420ms; }
+.stagger-item:nth-child(n+9) { animation-delay: 480ms; }
+
+/* 2. FADE + SCALE - iPhone-like */
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-scale-enter {
+  animation: fadeScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.fade-scale-delay-1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.fade-scale-delay-2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.fade-scale-delay-3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.fade-scale-delay-4 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+/* 3. BOTTOM SHEET CONTENT SLIDE */
+@keyframes contentSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content-slide-container {
+  animation: contentSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Header entrance - staggered */
+@keyframes headerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-enter {
+  animation: headerEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Section title entrance */
+@keyframes titleSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.title-slide-in {
+  animation: titleSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Number counter animation */
+@keyframes numberPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.number-pop {
+  animation: numberPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stat bar fill animation */
+@keyframes barFill {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.bar-fill {
+  animation: barFill 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  width: 0;
+}
+
+.bar-fill-delay-1 { animation-delay: 0.1s; }
+.bar-fill-delay-2 { animation-delay: 0.2s; }
+.bar-fill-delay-3 { animation-delay: 0.3s; }
+.bar-fill-delay-4 { animation-delay: 0.4s; }
+.bar-fill-delay-5 { animation-delay: 0.5s; }
+.bar-fill-delay-6 { animation-delay: 0.6s; }
+
+/* Tab indicator slide */
+@keyframes indicatorSlide {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.indicator-slide {
+  animation: indicatorSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
